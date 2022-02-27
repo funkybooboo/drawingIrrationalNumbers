@@ -4,7 +4,6 @@ from decimal import *
 from getPi import firstOneMilDigOfPi
 
 def changeBaseGetNum(num, maxNum, base, numToChar, userNumChoice):
-    print("2")
     newNum = ""
     quosent = num / base
     count = 1
@@ -12,35 +11,47 @@ def changeBaseGetNum(num, maxNum, base, numToChar, userNumChoice):
     print()
 
     if userNumChoice == 1:
-        print("3")
         while quosent > 0:
             if count % 1000 == 0:
-                poop = round((len(newNum) / newMax) * 100)
-                if poop + 1 == 100 or poop + 2 == 100 or poop - 1 == 100 or poop - 2 == 100:
+                percent = round((len(newNum) / newMax) * 100)
+                if percent + 1 == 100 or percent + 2 == 100 or percent - 1 == 100 or percent - 2 == 100:
                     print("\t" + str(100) + "% done converting Pi to base " + str(base), end='\r')
-                elif poop < 100:
-                    print("\t" + str(poop) + "% done converting Pi to base " + str(base), end='\r')
+                elif percent < 100:
+                    print("\t" + str(percent) + "% done converting Pi to base " + str(base), end='\r')
 
-            newNum = getNewNumCalculation(quosent, newNum, numToChar, base, count)
+            split = str(quosent).split(".")
+            if len(split) == 1:
+                split = [split[0], "0"]
+            n = round(eval("." + split[1].strip()) * base)
+            newNum += numToChar[n]
+            quosent = Decimal(split[0])
+            quosent /= base
+            count += 1
 
         newNum = newNum[::-1]
         return newNum
     elif userNumChoice == 2:
         while quosent > 0:
             if count % 1000 == 0:
-                poop = round((len(newNum) / newMax) * 100)
-                if poop + 1 == 100 or poop + 2 == 100 or poop + 3 == 100 or poop - 1 == 100 or poop - 2 == 100 or poop - 3 == 100:
+                percent = round((len(newNum) / newMax) * 100)
+                if percent + 1 == 100 or percent + 2 == 100 or percent + 3 == 100 or percent - 1 == 100 or percent - 2 == 100 or percent - 3 == 100:
                     print("\t" + str(100) + "% done converting E to base " + str(base), end='\r')
-                elif poop < 100:
-                    print("\t" + str(poop) + "% done converting E to base " + str(base), end='\r')
+                elif percent < 100:
+                    print("\t" + str(percent) + "% done converting E to base " + str(base), end='\r')
 
-            newNum = getNewNumCalculation(quosent, newNum, numToChar, base, count)
+            split = str(quosent).split(".")
+            if len(split) == 1:
+                split = [split[0], "0"]
+            n = round(eval("." + split[1].strip()) * base)
+            newNum += numToChar[n]
+            quosent = Decimal(split[0])
+            quosent /= base
+            count += 1
 
         newNum = newNum[::-1]
         return newNum
 
 def getNewBaseCalc(base, maxNum):
-    print("4")
     if base == 3:
         newMax = maxNum * 2.0655
     elif base == 4:
@@ -69,20 +80,7 @@ def getNewBaseCalc(base, maxNum):
         newMax = maxNum * 0.825
     return newMax
 
-def getNewNumCalculation(quosent, newNum, numToChar, base, count):
-    print("5")
-    split = str(quosent).split(".")
-    if len(split) == 1:
-        split = [split[0], "0"]
-    n = round(eval("." + split[1].strip()) * base)
-    newNum += numToChar[n]
-    quosent = Decimal(split[0])
-    quosent /= base
-    count += 1
-    return newNum
-
 def changeBase(num, maxNum, base, userNumChoice):
-    print("1")
     stringNum = str(num)
     num = Decimal(stringNum.replace(".", ""))
     numToChar = {i: "0123456789ABCDEF"[i] for i in range(16)}
@@ -97,7 +95,7 @@ def pi(maxNum):
     plusOrMinus = True
     getcontext().prec = maxNum
     pi = Decimal(1)
-    while count <= maxNum:
+    while count < maxNum:
         if count % 1000 == 0:
             print("\t" + str(round((count/maxNum) * 100)) + "% done calculating Pi", end='\r')
         if plusOrMinus:
@@ -110,26 +108,26 @@ def pi(maxNum):
     pi = pi * 4
     return pi
 
-def EulersNum(maxNum):
+def eulersNum(maxNum):
     # e = 2 + 1/2 + 1/6 + 1/24 + .....
     numerator = Decimal(1)
     denominator = Decimal(2)
     multiplyer = Decimal(3)
     e = Decimal(2)
     count = 1
-    while count <= maxNum:
+    while count < maxNum:
         if count % 1000 == 0:
             print("\t" + str(round((count / maxNum) * 100)) + "% done calculating E", end='\r')
-
+        stringOfDenominator = str(denominator)
+        if len(stringOfDenominator) > 23:
+            stringOfDenominator = stringOfDenominator[0:23]
+            denominator = Decimal(stringOfDenominator)
         e += numerator / denominator
         denominator *= multiplyer
         multiplyer += 1
-        stringdeno = str(denominator)
-        if len(stringdeno) > 23:
-            stringdeno = stringdeno[0:23]
-            denominator = Decimal(stringdeno)
         count += 1
 
+    print(e)
     return e
 
 def drawing(num, userBase, timeStamp1):
@@ -163,7 +161,6 @@ def drawing(num, userBase, timeStamp1):
             percent = round((interator / len(num)) * 100)
             duration = time.time() - startTime
             estimatedTime = (((len(num) - interator) * duration) / (interator + 1))
-
             m, s = divmod(estimatedTime, 60)
             h, m = divmod(m, 60)
             print("\tEstimated Time: " + '{:d}% {:d}h {:02d}m {:02d}s'.format(int(percent), int(h), int(m), int(s)), end="\r")
@@ -225,12 +222,12 @@ def main():
             print("Invalid Input. Try again")
             main()
         else:
-            baseTenE = EulersNum(maxNum)
+            baseTenE = eulersNum(maxNum)
             if userBase == 10:
                 drawing(str(baseTenE), userBase, timeStamp1)
             else:
                 newE = changeBase(baseTenE, maxNum, userBase, userNumChoice)
-                drawing(newE, userBase, timeStamp1)
+                drawing(str(newE), userBase, timeStamp1)
     else:
         print("Invalid Input. Try again")
         main()
